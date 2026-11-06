@@ -8,6 +8,7 @@ import { spawn } from 'child_process';
 import type { TextEdit, Range } from 'vscode-languageserver/node';
 import * as path from 'path';
 import { URI } from 'vscode-uri';
+import { FILE_EXTENSIONS } from '../utils/constants';
 import { logger } from '../utils/logger';
 
 /**
@@ -37,6 +38,20 @@ function toUtf8Offset(lines: string[], line: number, character: number, newlineL
   offset += Buffer.byteLength(lineText.slice(0, clampedCharacter), 'utf8');
 
   return offset;
+}
+
+/**
+ * clang-format has no built-in language mapping for the ".dag" extension, so the
+ * file is formatted with the wrong (C/C++) rules. Assuming a textproto file name
+ * makes clang-format treat the content as protobuf text format instead.
+ */
+const DAG_ASSUME_FILENAME = `file${FILE_EXTENSIONS.PB_TXT}`;
+
+/**
+ * Check whether a path points at a ".dag" file.
+ */
+function isDagFilePath(filePath?: string): boolean {
+  return filePath?.toLowerCase().endsWith(FILE_EXTENSIONS.DAG) ?? false;
 }
 
 export interface ClangFormatSettings {
@@ -209,7 +224,11 @@ export class ClangFormatProvider {
 
       // Add assume filename for language detection
       if (filePath) {
-        args.push(`--assume-filename=${actualPath}`);
+        if (isDagFilePath(actualPath)) {
+          args.push(`--assume-filename=${DAG_ASSUME_FILENAME}`);
+        } else {
+          args.push(`--assume-filename=${actualPath}`);
+        }
       } else {
         args.push('--assume-filename=file.proto');
       }

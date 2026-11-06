@@ -399,7 +399,7 @@ describe('Extension Activation', () => {
     await activate(mockExtensionContext as any);
 
     const watcherCalls = mockVscode.workspace.createFileSystemWatcher.mock.calls as unknown as Array<[any]>;
-    const scopedCall = watcherCalls.find(([pattern]) => pattern?.pattern === '**/*.{proto,textproto,pbtxt,prototxt}');
+    const scopedCall = watcherCalls.find(([pattern]) => pattern?.pattern === '**/*.{proto,textproto,pbtxt,prototxt,pb.txt,dag}');
     expect(scopedCall).toBeDefined();
     expect(normalizeTestPath(scopedCall?.[0].base.fsPath ?? '')).toBe('/mock/workspace/protos');
   });

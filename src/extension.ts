@@ -170,7 +170,7 @@ class ReconfigurableProtoWatcher implements vscode.FileSystemWatcher {
   private getPatterns(): vscode.GlobPattern[] {
     const folders = vscode.workspace.workspaceFolders ?? [];
     if (folders.length === 0) {
-      return ['**/*.{proto,textproto,pbtxt,prototxt}'];
+      return ['**/*.{proto,textproto,pbtxt,prototxt,pb.txt,dag}'];
     }
 
     const roots = folders.map(folder => {
@@ -199,7 +199,7 @@ class ReconfigurableProtoWatcher implements vscode.FileSystemWatcher {
 
     if (roots.every(({ root, skip }) => !root && !skip)) {
       // Reuse VS Code's workspace watcher so files.watcherExclude is applied.
-      return ['**/*.{proto,textproto,pbtxt,prototxt}'];
+      return ['**/*.{proto,textproto,pbtxt,prototxt,pb.txt,dag}'];
     }
 
     return roots.flatMap(({ folder, root, skip }) => {
@@ -207,7 +207,7 @@ class ReconfigurableProtoWatcher implements vscode.FileSystemWatcher {
         return [];
       }
       return [
-        new vscode.RelativePattern(vscode.Uri.file(root ?? folder.uri.fsPath), '**/*.{proto,textproto,pbtxt,prototxt}'),
+        new vscode.RelativePattern(vscode.Uri.file(root ?? folder.uri.fsPath), '**/*.{proto,textproto,pbtxt,prototxt,pb.txt,dag}'),
       ];
     });
   }

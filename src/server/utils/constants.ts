@@ -182,6 +182,7 @@ export const FILE_EXTENSIONS = {
   TXTPB: '.txtpb',
   TEXTPB: '.textpb',
   PB_TXT: '.pb.txt',
+  DAG: '.dag',
 } as const;
 
 /**
